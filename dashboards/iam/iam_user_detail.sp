@@ -127,6 +127,9 @@ dashboard "aws_iam_user_detail" {
     table {
       title = "Groups"
       width = 6
+      column "Group Name" {
+        href = "${dashboard.aws_iam_group_detail.url_path}?input.group_arn={{.'Group ARN' | @uri}}"
+      }
       query = query.aws_iam_groups_for_user
       args  = {
         arn = self.input.user_arn.value
@@ -410,8 +413,8 @@ query "aws_iam_user_manage_policies_sankey" {
 query "aws_iam_groups_for_user" {
   sql   = <<-EOQ
     select
-      g ->> 'GroupName' as "Name",
-      g ->> 'Arn' as "ARN"
+      g ->> 'GroupName' as "Group Name",
+      g ->> 'Arn' as "Group ARN"
     from
       aws_iam_user as u,
       jsonb_array_elements(groups) as g
